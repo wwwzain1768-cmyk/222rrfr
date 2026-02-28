@@ -1,0 +1,47 @@
+/* إعدادات عامة */
+* { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; }
+body { background-color: #e9ecef; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+
+/* تصميم الحاويات */
+.main-container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+.dashboard-container { max-width: 800px; padding: 0; }
+h2 { margin-bottom: 20px; color: #2c3e50; }
+
+/* تصميم الحقول */
+.form-group { margin-bottom: 20px; padding: 0 30px; }
+input[type="text"], input[type="password"], input[type="number"] { width: 100%; padding: 15px; border: 2px solid #bdc3c7; border-radius: 8px; font-size: 1.1rem; outline: none; transition: 0.3s; text-align: right; }
+input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus { border-color: #3498db; box-shadow: 0 0 8px rgba(52, 152, 219, 0.3); }
+
+/* تصميم الأزرار */
+.primary-btn { width: calc(100% - 60px); padding: 15px; background-color: #3498db; color: white; border: none; border-radius: 8px; font-size: 1.2rem; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+.primary-btn:hover { background-color: #2980b9; }
+.secondary-btn { width: 100%; padding: 15px; background-color: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 1.2rem; cursor: pointer; transition: 0.3s; }
+.secondary-btn:hover { background-color: #c0392b; }
+.error-msg { color: #e74c3c; margin-top: 15px; font-weight: bold; }
+
+/* شاشة الترحيب المتحركة */
+.greeting-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+.greeting-box { background: white; padding: 50px; border-radius: 15px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.3); animation: slideDown 0.6s ease-out; }
+@keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.animate-text { font-size: 2rem; color: #2c3e50; margin-bottom: 30px; animation: pulse 1s infinite alternate; }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); color: #27ae60; } }
+.action-btns { display: flex; gap: 15px; }
+.action-btns .primary-btn { width: 100%; margin: 0; }
+
+/* التبويبات */
+.tabs-header { display: flex; background-color: #ecf0f1; border-radius: 15px 15px 0 0; }
+.tab-btn { flex: 1; padding: 15px; border: none; background: none; font-size: 1.1rem; cursor: pointer; transition: 0.3s; font-weight: bold; color: #7f8c8d; }
+.tab-btn.active { background-color: white; color: #3498db; border-bottom: 3px solid #3498db; }
+.tab-content { display: none; padding: 30px 0; animation: fadeIn 0.5s; }
+.tab-content.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* تصميم قائمة الزبائن ونظام التسديد */
+.customers-list { padding: 0 30px; }
+.customer-item { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e9ecef; text-align: right; display: flex; justify-content: space-between; align-items: center; }
+.customer-info p { margin-bottom: 5px; font-size: 1.1rem; }
+
+/* أزرار وحالات التسديد */
+.pay-btn { background-color: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+.pay-btn:hover { background-color: #2ecc71; }
+.paid-badge { background-color: #ecf0f1; color: #27ae60; padding: 10px 20px; border-radius: 5px; font-weight: bold; border: 1px solid #27ae60; }
