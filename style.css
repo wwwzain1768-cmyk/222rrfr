@@ -30,18 +30,45 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:foc
 @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 .animate-text { font-size: 2rem; color: #2c3e50; margin-bottom: 30px; animation: pulse 1s infinite alternate; }
 @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); color: #27ae60; } }
-.action-btns { display: flex; gap: 15px; }
-.action-btns .primary-btn { width: 100%; margin: 0; }
+
+/* نافذة التنبيهات المخصصة */
+.custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 10000; }
+.modal-content { background: white; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.3); animation: popModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); min-width: 300px; max-width: 90%; }
+@keyframes popModal { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.modal-content p { font-size: 1.3rem; color: #2c3e50; margin-bottom: 25px; font-weight: bold; }
+.modal-actions { display: flex; gap: 15px; justify-content: center; }
+.modal-btn { padding: 12px 20px; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; color: white; flex: 1; }
+.btn-confirm { background-color: #27ae60; }
+.btn-confirm:hover { background-color: #2ecc71; }
+.btn-cancel { background-color: #e74c3c; }
+.btn-cancel:hover { background-color: #c0392b; }
+
+/* تبويبات الزبائن والمنتهي */
+.tab-btn { flex: 1; padding: 15px; border: none; background: none; font-size: 1.1rem; cursor: pointer; transition: 0.3s; font-weight: bold; color: #7f8c8d; }
+.tab-btn.active { background-color: white; color: #3498db; border-bottom: 3px solid #3498db; }
+.customer-tab-content { display: none; }
+.customer-tab-content.active { display: block; animation: fadeIn 0.5s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* تصميم قائمة الزبائن ونظام التسديد */
 .customers-list { padding: 0 30px; padding-bottom: 30px;}
-.customer-item { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e9ecef; text-align: right; display: flex; justify-content: space-between; align-items: center; }
-.customer-info p { margin-bottom: 5px; font-size: 1.1rem; }
+.customer-item { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e9ecef; text-align: right; cursor: pointer; transition: 0.3s; }
+.customer-item:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+/* تفاصيل الزبون المخفية */
+.customer-header { display: flex; justify-content: space-between; align-items: center; font-size: 1.2rem; font-weight: bold; color: #2c3e50; }
+.customer-details { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #bdc3c7; animation: fadeInDown 0.3s ease-out; }
+.customer-details.show { display: block; }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+.customer-info p { margin-bottom: 8px; font-size: 1.1rem; }
 
 /* أزرار وحالات التسديد */
-.payment-action { display: flex; gap: 5px; flex-direction: column; align-items: center;}
+.payment-action { display: flex; gap: 8px; flex-direction: column; align-items: center;}
 .pay-btn { background-color: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: 0.3s; width: 100%;}
 .pay-btn:hover { background-color: #2ecc71; }
 .edit-btn { background-color: #f39c12; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: 0.3s; width: 100%;}
 .edit-btn:hover { background-color: #e67e22; }
+.delete-btn { background-color: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: 0.3s; width: 100%;}
+.delete-btn:hover { background-color: #c0392b; }
 .paid-badge { background-color: #ecf0f1; color: #27ae60; padding: 10px 20px; border-radius: 5px; font-weight: bold; border: 1px solid #27ae60; width: 100%; text-align: center;}
