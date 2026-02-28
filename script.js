@@ -46,15 +46,24 @@ function cancelLogin() {
     currentLoggedTowerCode = ""; 
 }
 
-function openClientTab(tabId) {
-    let contents = document.getElementsByClassName('tab-content');
-    for (let i = 0; i < contents.length; i++) contents[i].classList.remove('active');
+function toggleAddForm() {
+    let formSection = document.getElementById('addCustomerSection');
+    if (formSection.style.display === 'none') {
+        formSection.style.display = 'block';
+    } else {
+        formSection.style.display = 'none';
+        resetForm();
+    }
+}
 
-    let buttons = document.getElementsByClassName('tab-btn');
-    for (let i = 0; i < buttons.length; i++) buttons[i].classList.remove('active');
-
-    document.getElementById(tabId).classList.add('active');
-    event.currentTarget.classList.add('active');
+function resetForm() {
+    document.getElementById('customerName').value = "";
+    document.getElementById('customerPhone').value = "";
+    document.getElementById('customerPrice').value = "";
+    document.getElementById('startDate').value = "";
+    document.getElementById('endDate').value = "";
+    editCustomerId = null;
+    document.getElementById('saveCustomerBtn').innerText = "حفظ بيانات الزبون";
 }
 
 function addCustomer() {
@@ -95,19 +104,12 @@ function addCustomer() {
                 break;
             }
         }
-        editCustomerId = null;
-        document.getElementById('saveCustomerBtn').innerText = "حفظ بيانات الزبون";
         alert("تم التعديل بنجاح!");
     }
 
     localStorage.setItem('customersData', JSON.stringify(customersData));
-
-    document.getElementById('customerName').value = "";
-    document.getElementById('customerPhone').value = "";
-    document.getElementById('customerPrice').value = "";
-    document.getElementById('startDate').value = "";
-    document.getElementById('endDate').value = "";
-    
+    resetForm();
+    document.getElementById('addCustomerSection').style.display = 'none';
     renderCustomers(); 
 }
 
@@ -180,7 +182,9 @@ function editCustomer(id) {
 
         editCustomerId = id;
         document.getElementById('saveCustomerBtn').innerText = "تحديث بيانات الزبون";
-        openClientTab('tab-add-customer');
+        
+        document.getElementById('addCustomerSection').style.display = 'block';
+        window.scrollTo(0, 0);
     }
 }
 
