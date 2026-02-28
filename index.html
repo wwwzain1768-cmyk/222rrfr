@@ -26,13 +26,10 @@
         </div>
     </div>
 
-    <div id="dashboard-section" class="main-container dashboard-container" style="display: none;">
-        <div class="tabs-header">
-            <button class="tab-btn active" onclick="openClientTab('tab-add-customer')">إضافة زبون</button>
-            <button class="tab-btn" onclick="openClientTab('tab-customers-list')">الزبائن والتسديد</button>
-        </div>
+    <div id="dashboard-section" class="main-container dashboard-container" style="display: none; padding-top: 30px;">
+        <button class="primary-btn" onclick="toggleAddForm()" style="width: calc(100% - 60px); margin: 0 30px 20px 30px;">إضافة زبون</button>
 
-        <div id="tab-add-customer" class="tab-content active">
+        <div id="addCustomerSection" style="display: none; margin-bottom: 30px; border-bottom: 2px solid #ecf0f1; padding-bottom: 20px;">
             <h2>إضافة زبون جديد للبرج</h2>
             <div class="form-group"><input type="text" id="customerName" placeholder="اسم الزبون"></div>
             <div class="form-group"><input type="text" id="customerPhone" placeholder="رقم هاتف الزبون"></div>
@@ -40,17 +37,16 @@
             <div class="form-group"><input type="date" id="startDate" placeholder="تاريخ البدء"></div>
             <div class="form-group"><input type="date" id="endDate" placeholder="تاريخ الانتهاء"></div>
             <button class="primary-btn" id="saveCustomerBtn" onclick="addCustomer()">حفظ بيانات الزبون</button>
+            <button class="secondary-btn" onclick="toggleAddForm()" style="width: calc(100% - 60px); margin: 0 30px;">إلغاء</button>
         </div>
 
-        <div id="tab-customers-list" class="tab-content">
-            <div class="dashboard-stats">
-                <div class="stat-box">عدد المشتركين<br><span id="towerSubscribers">0</span></div>
-                <div class="stat-box">الدين الكلي<br><span id="towerDebt">0</span></div>
-            </div>
-            
-            <h2>قائمة الزبائن ونظام التسديد</h2>
-            <div id="customersList" class="customers-list">
-            </div>
+        <div class="dashboard-stats">
+            <div class="stat-box">عدد المشتركين<br><span id="towerSubscribers">0</span></div>
+            <div class="stat-box">الدين الكلي<br><span id="towerDebt">0</span></div>
+        </div>
+        
+        <h2>قائمة الزبائن ونظام التسديد</h2>
+        <div id="customersList" class="customers-list">
         </div>
     </div>
 
