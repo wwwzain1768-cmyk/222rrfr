@@ -30,6 +30,30 @@ function showModal(msg, type, onConfirmCallback) {
     }
 }
 
+function showInputModal(msg, onConfirmCallback) {
+    document.getElementById('inputModal').style.display = 'flex';
+    document.getElementById('inputModalMsg').innerText = msg;
+    document.getElementById('inputModalValue').value = "";
+    let actions = document.getElementById('inputModalActions');
+    actions.innerHTML = "";
+
+    let btnYes = document.createElement('button');
+    btnYes.className = 'modal-btn btn-confirm';
+    btnYes.innerText = 'تأكيد';
+    btnYes.onclick = () => { 
+        let val = document.getElementById('inputModalValue').value;
+        document.getElementById('inputModal').style.display = 'none'; 
+        if (onConfirmCallback) onConfirmCallback(val);
+    };
+    let btnNo = document.createElement('button');
+    btnNo.className = 'modal-btn btn-cancel';
+    btnNo.innerText = 'إلغاء';
+    btnNo.onclick = () => { document.getElementById('inputModal').style.display = 'none'; };
+    
+    actions.appendChild(btnYes);
+    actions.appendChild(btnNo);
+}
+
 function checkCode() {
     let enteredCode = document.getElementById('enteredCode').value;
     let errorMsg = document.getElementById('error-msg');
@@ -138,6 +162,9 @@ function addCustomer() {
             price: price,
             startDate: startDate,
             endDate: endDate,
+            paid: 0,
+            debts: 0,
+            history: [{date: new Date().toISOString().split('T')[0], action: 'تسجيل اشتراك', amount: parseFloat(price)}],
             isPaid: false
         };
         customersData.push(newCustomer);
@@ -173,7 +200,13 @@ function renderCustomers() {
 
     let towerDebt = 0;
     towerCustomers.forEach(cust => {
-        if (!cust.isPaid) towerDebt += parseFloat(cust.price || 0);
+        let cDebts = cust.debts || 0;
+        let cPaid = cust.paid || 0;
+        let cTotal = parseFloat(cust.price || 0) + parseFloat(cDebts);
+        let rem = cTotal - cPaid;
+        if (rem > 0) {
+            towerDebt += rem;
+        }
     });
     
     document.getElementById('towerSubscribers').innerText = towerCustomers.length;
@@ -197,6 +230,11 @@ function renderCustomers() {
         }
 
         let isExpired = remainingDays <= 0;
+        
+        let cDebts = customer.debts || 0;
+        let cPaid = customer.paid || 0;
+        let totalPrice = parseFloat(customer.price || 0) + parseFloat(cDebts);
+        let remaining = totalPrice - cPaid;
 
         let itemDiv = document.createElement('div');
         itemDiv.className = 'customer-item';
@@ -212,28 +250,30 @@ function renderCustomers() {
         };
 
         let paymentHTML = "";
-        if (customer.isPaid) {
+        if (remaining <= 0) {
             paymentHTML = `<span class="paid-badge">✔ تم التسديد</span>`;
         } else {
-            paymentHTML = `<button class="pay-btn" onclick="paySubscription(${customer.id})">تسديد المبلغ</button>`;
+            paymentHTML = `<button class="pay-btn" onclick="paySubscription(${customer.id})">تسديد</button>`;
         }
 
         itemDiv.innerHTML = `
             <div class="customer-header">
                 <span>${customer.name}</span>
-                <span style="font-size: 0.9rem; color: ${isExpired ? '#e74c3c' : '#7f8c8d'}">${isExpired ? 'منتهي' : 'نشط'}</span>
+                <span style="font-size: 0.9rem; color: ${isExpired ? '#e74c3c' : '#27ae60'}">${isExpired ? 'منتهي' : remainingDays + ' يوم'}</span>
             </div>
             <div class="customer-details" id="details-${customer.id}">
                 <div class="customer-info">
+                    <p><strong>المبلغ الكلي:</strong> ${totalPrice} دينار</p>
+                    <p><strong>الباقي:</strong> <span style="color:#e74c3c; font-weight:bold;">${remaining} دينار</span></p>
                     <p><strong>الرقم:</strong> ${customer.phone}</p>
-                    <p><strong>المبلغ المطلوب:</strong> ${customer.price} دينار</p>
                     <p><strong>تاريخ البدء:</strong> ${customer.startDate}</p>
                     <p><strong>تاريخ الانتهاء:</strong> ${customer.endDate}</p>
-                    <p><strong>الأيام المتبقية:</strong> ${remainingDays} يوم</p>
                 </div>
                 <div class="payment-action" style="margin-top: 15px;">
+                    <button class="add-debt-btn" onclick="addDebt(${customer.id})">إضافة دين</button>
                     ${paymentHTML}
                     <button class="edit-btn" onclick="editCustomer(${customer.id})">تعديل</button>
+                    <button class="history-btn" onclick="showHistory(${customer.id})">سجل كامل</button>
                     <button class="delete-btn" onclick="deleteCustomer(${customer.id})">حذف</button>
                 </div>
             </div>
@@ -259,6 +299,62 @@ function renderCustomers() {
     }
 }
 
+function paySubscription(id) {
+    showInputModal("أدخل المبلغ المراد تسديده:", (amount) => {
+        if(!amount || isNaN(amount) || amount <= 0) {
+            showModal("الرجاء إدخال مبلغ صحيح!", "alert");
+            return;
+        }
+        let allCustomers = JSON.parse(localStorage.getItem('customersData')) || [];
+        let customer = allCustomers.find(c => c.id === id);
+        if (customer) {
+            customer.paid = (customer.paid || 0) + parseFloat(amount);
+            customer.history = customer.history || [];
+            let today = new Date().toISOString().split('T')[0];
+            customer.history.push({date: today, action: `تسديد مبلغ`, amount: parseFloat(amount)});
+            localStorage.setItem('customersData', JSON.stringify(allCustomers));
+            renderCustomers();
+            showModal("تم التسديد بنجاح!", "alert");
+        }
+    });
+}
+
+function addDebt(id) {
+    showInputModal("أدخل مبلغ الدين المضاف:", (amount) => {
+        if(!amount || isNaN(amount) || amount <= 0) {
+            showModal("الرجاء إدخال مبلغ صحيح!", "alert");
+            return;
+        }
+        let allCustomers = JSON.parse(localStorage.getItem('customersData')) || [];
+        let customer = allCustomers.find(c => c.id === id);
+        if (customer) {
+            customer.debts = (customer.debts || 0) + parseFloat(amount);
+            customer.history = customer.history || [];
+            let today = new Date().toISOString().split('T')[0];
+            customer.history.push({date: today, action: `إضافة دين`, amount: parseFloat(amount)});
+            localStorage.setItem('customersData', JSON.stringify(allCustomers));
+            renderCustomers();
+            showModal("تمت إضافة الدين بنجاح!", "alert");
+        }
+    });
+}
+
+function showHistory(id) {
+    let allCustomers = JSON.parse(localStorage.getItem('customersData')) || [];
+    let customer = allCustomers.find(c => c.id === id);
+    if (customer) {
+        let historyHTML = "";
+        let historyArr = customer.history || [];
+        if (historyArr.length === 0) {
+            historyHTML = "<p style='text-align:center; color:#7f8c8d;'>لا يوجد سجل متاح.</p>";
+        } else {
+            historyHTML = historyArr.map(h => `<div class='history-item'><strong>${h.date}:</strong> ${h.action} (${h.amount} دينار)</div>`).join('');
+        }
+        document.getElementById('historyContent').innerHTML = historyHTML;
+        document.getElementById('historyModal').style.display = 'flex';
+    }
+}
+
 function editCustomer(id) {
     let allCustomers = JSON.parse(localStorage.getItem('customersData')) || [];
     let customer = allCustomers.find(c => c.id === id);
@@ -275,21 +371,6 @@ function editCustomer(id) {
         document.getElementById('addCustomerSection').style.display = 'block';
         window.scrollTo(0, 0);
     }
-}
-
-function paySubscription(customerId) {
-    showModal("هل أنت متأكد من تسديد اشتراك هذا الزبون؟", "confirm", () => {
-        let allCustomers = JSON.parse(localStorage.getItem('customersData')) || [];
-        for (let i = 0; i < allCustomers.length; i++) {
-            if (allCustomers[i].id === customerId) {
-                allCustomers[i].isPaid = true; 
-                break;
-            }
-        }
-        localStorage.setItem('customersData', JSON.stringify(allCustomers));
-        renderCustomers();
-        showModal("تم التسديد بنجاح!", "alert");
-    });
 }
 
 function deleteCustomer(id) {
