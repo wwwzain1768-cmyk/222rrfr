@@ -7,10 +7,15 @@ body { background-color: #e9ecef; color: #333; display: flex; justify-content: c
 .dashboard-container { max-width: 800px; padding: 0; }
 h2 { margin-bottom: 20px; color: #2c3e50; }
 
+/* الإحصائيات */
+.dashboard-stats { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 15px; text-align: center; padding: 0 30px;}
+.stat-box { background-color: #34495e; color: white; padding: 15px; border-radius: 8px; flex: 1; font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.stat-box span { display: block; margin-top: 10px; font-size: 1.5rem; color: #f1c40f; }
+
 /* تصميم الحقول */
 .form-group { margin-bottom: 20px; padding: 0 30px; }
-input[type="text"], input[type="password"], input[type="number"] { width: 100%; padding: 15px; border: 2px solid #bdc3c7; border-radius: 8px; font-size: 1.1rem; outline: none; transition: 0.3s; text-align: right; }
-input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus { border-color: #3498db; box-shadow: 0 0 8px rgba(52, 152, 219, 0.3); }
+input[type="text"], input[type="password"], input[type="number"], input[type="date"] { width: 100%; padding: 15px; border: 2px solid #bdc3c7; border-radius: 8px; font-size: 1.1rem; outline: none; transition: 0.3s; text-align: right; }
+input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="date"]:focus { border-color: #3498db; box-shadow: 0 0 8px rgba(52, 152, 219, 0.3); }
 
 /* تصميم الأزرار */
 .primary-btn { width: calc(100% - 60px); padding: 15px; background-color: #3498db; color: white; border: none; border-radius: 8px; font-size: 1.2rem; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
@@ -42,6 +47,9 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:foc
 .customer-info p { margin-bottom: 5px; font-size: 1.1rem; }
 
 /* أزرار وحالات التسديد */
-.pay-btn { background-color: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+.payment-action { display: flex; gap: 5px; flex-direction: column; align-items: center;}
+.pay-btn { background-color: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: 0.3s; width: 100%;}
 .pay-btn:hover { background-color: #2ecc71; }
-.paid-badge { background-color: #ecf0f1; color: #27ae60; padding: 10px 20px; border-radius: 5px; font-weight: bold; border: 1px solid #27ae60; }
+.edit-btn { background-color: #f39c12; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: 0.3s; width: 100%;}
+.edit-btn:hover { background-color: #e67e22; }
+.paid-badge { background-color: #ecf0f1; color: #27ae60; padding: 10px 20px; border-radius: 5px; font-weight: bold; border: 1px solid #27ae60; width: 100%; text-align: center;}
