@@ -14,6 +14,26 @@
         </div>
     </div>
 
+    <div id="inputModal" class="custom-modal" style="display: none;">
+        <div class="modal-content">
+            <p id="inputModalMsg"></p>
+            <div class="form-group" style="padding:0; margin-bottom:15px;">
+                <input type="number" id="inputModalValue" placeholder="أدخل الرقم هنا...">
+            </div>
+            <div class="modal-actions" id="inputModalActions"></div>
+        </div>
+    </div>
+
+    <div id="historyModal" class="custom-modal" style="display: none;">
+        <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+            <p style="font-size: 1.3rem; color: #2c3e50; font-weight: bold; margin-bottom: 15px;">السجل الكامل</p>
+            <div id="historyContent" style="text-align: right; margin-bottom: 20px;"></div>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" onclick="document.getElementById('historyModal').style.display='none'">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
     <div id="login-section" class="main-container">
         <h2>أهلاً بك، أدخل كلمة سر (رمز) البرج</h2>
         <div class="form-group">
