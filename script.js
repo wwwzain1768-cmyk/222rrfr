@@ -1,12 +1,10 @@
-// متغير لحفظ رمز البرج الحالي الذي سجل الدخول
 let currentLoggedTowerCode = "";
+let editCustomerId = null;
 
-// 1. دالة التحقق من الرمز
 function checkCode() {
     let enteredCode = document.getElementById('enteredCode').value;
     let errorMsg = document.getElementById('error-msg');
     
-    // سحب بيانات الأبراج من موقع الإدارة (يجب أن تكون قد أنشأت برجاً هناك أولاً)
     let savedData = localStorage.getItem('towersData');
     if (!savedData) { 
         errorMsg.innerText = "لا توجد أبراج مسجلة! تأكد من إنشائها في موقع الإدارة أولاً."; 
@@ -16,7 +14,6 @@ function checkCode() {
     let towersArray = JSON.parse(savedData);
     let foundTower = null;
 
-    // البحث عن الرمز
     for (let i = 0; i < towersArray.length; i++) {
         if (towersArray[i].towerCode === enteredCode) { 
             foundTower = towersArray[i]; 
@@ -26,9 +23,8 @@ function checkCode() {
 
     if (foundTower) {
         errorMsg.innerText = ""; 
-        currentLoggedTowerCode = foundTower.towerCode; // حفظ رمز البرج لربط الزبائن به
+        currentLoggedTowerCode = foundTower.towerCode; 
         
-        // عرض رسالة الترحيب باسم المالك
         document.getElementById('greeting-text').innerText = `هل أنت الأستاذ/ة ${foundTower.ownerName}؟`;
         document.getElementById('login-section').style.display = 'none';
         document.getElementById('greeting-section').style.display = 'flex';
@@ -37,22 +33,19 @@ function checkCode() {
     }
 }
 
-// 2. تأكيد الدخول وفتح لوحة التحكم
 function confirmIdentity() {
     document.getElementById('greeting-section').style.display = 'none';
     document.getElementById('dashboard-section').style.display = 'block';
-    renderCustomers(); // جلب وعرض الزبائن الخاصين بهذا البرج
+    renderCustomers(); 
 }
 
-// 3. إلغاء الدخول
 function cancelLogin() {
     document.getElementById('greeting-section').style.display = 'none';
     document.getElementById('login-section').style.display = 'block';
     document.getElementById('enteredCode').value = "";
-    currentLoggedTowerCode = ""; // تصفير الرمز
+    currentLoggedTowerCode = ""; 
 }
 
-// 4. التنقل بين التبويبات
 function openClientTab(tabId) {
     let contents = document.getElementsByClassName('tab-content');
     for (let i = 0; i < contents.length; i++) contents[i].classList.remove('active');
@@ -64,51 +57,74 @@ function openClientTab(tabId) {
     event.currentTarget.classList.add('active');
 }
 
-// 5. إضافة زبون جديد
 function addCustomer() {
     let name = document.getElementById('customerName').value;
     let phone = document.getElementById('customerPhone').value;
     let price = document.getElementById('customerPrice').value;
+    let startDate = document.getElementById('startDate').value;
+    let endDate = document.getElementById('endDate').value;
 
-    if (name === "" || phone === "" || price === "") { 
+    if (name === "" || phone === "" || price === "" || startDate === "" || endDate === "") { 
         alert("الرجاء تعبئة جميع البيانات!"); 
         return; 
     }
 
-    // جلب الزبائن المخزنين سابقاً أو إنشاء مصفوفة جديدة
     let customersData = JSON.parse(localStorage.getItem('customersData')) || [];
 
-    // إنشاء كائن الزبون (لاحظ أننا نربطه برمز البرج الحالي، ونعطيه حالة الدفع false)
-    let newCustomer = {
-        id: Date.now(), // رقم تعريفي فريد
-        towerCode: currentLoggedTowerCode, // لكي لا تظهر الأسماء في أبراج أخرى
-        name: name,
-        phone: phone,
-        price: price,
-        isPaid: false // غير مدفوع افتراضياً
-    };
+    if (editCustomerId === null) {
+        let newCustomer = {
+            id: Date.now(),
+            towerCode: currentLoggedTowerCode,
+            name: name,
+            phone: phone,
+            price: price,
+            startDate: startDate,
+            endDate: endDate,
+            isPaid: false
+        };
+        customersData.push(newCustomer);
+        alert("تمت إضافة الزبون بنجاح!");
+    } else {
+        for (let i = 0; i < customersData.length; i++) {
+            if (customersData[i].id === editCustomerId) {
+                customersData[i].name = name;
+                customersData[i].phone = phone;
+                customersData[i].price = price;
+                customersData[i].startDate = startDate;
+                customersData[i].endDate = endDate;
+                break;
+            }
+        }
+        editCustomerId = null;
+        document.getElementById('saveCustomerBtn').innerText = "حفظ بيانات الزبون";
+        alert("تم التعديل بنجاح!");
+    }
 
-    customersData.push(newCustomer);
     localStorage.setItem('customersData', JSON.stringify(customersData));
 
-    // تفريغ الحقول
     document.getElementById('customerName').value = "";
     document.getElementById('customerPhone').value = "";
     document.getElementById('customerPrice').value = "";
+    document.getElementById('startDate').value = "";
+    document.getElementById('endDate').value = "";
     
-    alert("تمت إضافة الزبون بنجاح!");
-    renderCustomers(); // تحديث القائمة
+    renderCustomers(); 
 }
 
-// 6. عرض الزبائن ونظام التسديد
 function renderCustomers() {
     let listContainer = document.getElementById('customersList');
-    listContainer.innerHTML = ""; // تفريغ القائمة
+    listContainer.innerHTML = ""; 
 
     let allCustomers = JSON.parse(localStorage.getItem('customersData')) || [];
-    
-    // استخراج الزبائن الذين يتبعون للبرج الحالي فقط
     let towerCustomers = allCustomers.filter(cust => cust.towerCode === currentLoggedTowerCode);
+
+    let towerDebt = 0;
+    towerCustomers.forEach(cust => {
+        if (!cust.isPaid) towerDebt += parseFloat(cust.price || 0);
+    });
+    
+    document.getElementById('towerSubscribers').innerText = towerCustomers.length;
+    document.getElementById('towerDebt').innerText = towerDebt;
 
     if (towerCustomers.length === 0) {
         listContainer.innerHTML = "<p style='text-align:center; color:#7f8c8d;'>لا يوجد زبائن حالياً في هذا البرج.</p>";
@@ -119,7 +135,6 @@ function renderCustomers() {
         let itemDiv = document.createElement('div');
         itemDiv.className = 'customer-item';
         
-        // تحديد شكل زر التسديد بناءً على حالة الدفع (isPaid)
         let paymentHTML = "";
         if (customer.isPaid) {
             paymentHTML = `<span class="paid-badge">✔ تم التسديد</span>`;
@@ -127,13 +142,25 @@ function renderCustomers() {
             paymentHTML = `<button class="pay-btn" onclick="paySubscription(${customer.id})">تسديد المبلغ</button>`;
         }
 
+        let remainingDays = 0;
+        if (customer.endDate) {
+            let end = new Date(customer.endDate);
+            let today = new Date();
+            let diffTime = end - today;
+            remainingDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
         itemDiv.innerHTML = `
             <div class="customer-info">
                 <p><strong>الاسم:</strong> ${customer.name}</p>
                 <p><strong>الرقم:</strong> ${customer.phone}</p>
                 <p><strong>المبلغ المطلوب:</strong> ${customer.price} دينار</p>
+                <p><strong>تاريخ البدء:</strong> ${customer.startDate}</p>
+                <p><strong>تاريخ الانتهاء:</strong> ${customer.endDate}</p>
+                <p><strong>الأيام المتبقية:</strong> ${remainingDays} يوم</p>
             </div>
             <div class="payment-action">
+                <button class="edit-btn" onclick="editCustomer(${customer.id})">تعديل</button>
                 ${paymentHTML}
             </div>
         `;
@@ -141,20 +168,33 @@ function renderCustomers() {
     });
 }
 
-// 7. دالة تسديد المبلغ (تحويل الزبون إلى مدفوع)
+function editCustomer(id) {
+    let allCustomers = JSON.parse(localStorage.getItem('customersData')) || [];
+    let customer = allCustomers.find(c => c.id === id);
+    if (customer) {
+        document.getElementById('customerName').value = customer.name;
+        document.getElementById('customerPhone').value = customer.phone;
+        document.getElementById('customerPrice').value = customer.price;
+        document.getElementById('startDate').value = customer.startDate || "";
+        document.getElementById('endDate').value = customer.endDate || "";
+
+        editCustomerId = id;
+        document.getElementById('saveCustomerBtn').innerText = "تحديث بيانات الزبون";
+        openClientTab('tab-add-customer');
+    }
+}
+
 function paySubscription(customerId) {
     if (confirm("هل أنت متأكد من تسديد اشتراك هذا الزبون؟")) {
         let allCustomers = JSON.parse(localStorage.getItem('customersData')) || [];
         
-        // البحث عن الزبون وتغيير حالة الدفع
         for (let i = 0; i < allCustomers.length; i++) {
             if (allCustomers[i].id === customerId) {
-                allCustomers[i].isPaid = true; // تم الدفع
+                allCustomers[i].isPaid = true; 
                 break;
             }
         }
 
-        // حفظ التحديثات في الذاكرة وإعادة رسم الشاشة
         localStorage.setItem('customersData', JSON.stringify(allCustomers));
         renderCustomers();
     }
