@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="customModal" class="custom-modal" style="display: none;">
+        <div class="modal-content">
+            <p id="modalMsg"></p>
+            <div class="modal-actions" id="modalActions"></div>
+        </div>
+    </div>
+
     <div id="login-section" class="main-container">
         <h2>أهلاً بك، أدخل كلمة سر (رمز) البرج</h2>
         <div class="form-group">
@@ -45,8 +52,17 @@
             <div class="stat-box">الدين الكلي<br><span id="towerDebt">0</span></div>
         </div>
         
-        <h2>قائمة الزبائن ونظام التسديد</h2>
-        <div id="customersList" class="customers-list">
+        <div class="tabs-header" style="margin: 20px 30px; border-radius: 8px; overflow: hidden; display: flex; background-color: #ecf0f1;">
+            <button class="tab-btn active" onclick="switchCustomerTab('all')">جميع الزبائن</button>
+            <button class="tab-btn" onclick="switchCustomerTab('expired')">المنتهي</button>
+        </div>
+
+        <div id="all-customers-tab" class="customer-tab-content active">
+            <div id="customersList" class="customers-list"></div>
+        </div>
+
+        <div id="expired-customers-tab" class="customer-tab-content">
+            <div id="expiredList" class="customers-list"></div>
         </div>
     </div>
 
