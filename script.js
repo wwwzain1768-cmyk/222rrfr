@@ -1,3 +1,4 @@
+// script.js
 let currentLoggedTowerCode = "";
 let editCustomerId = null;
 
@@ -131,7 +132,6 @@ function toggleAddForm() {
 
 function resetForm() {
     document.getElementById('customerName').value = "";
-    document.getElementById('customerPhone').value = "";
     document.getElementById('customerPrice').value = "";
     document.getElementById('startDate').value = "";
     document.getElementById('endDate').value = "";
@@ -141,12 +141,11 @@ function resetForm() {
 
 function addCustomer() {
     let name = document.getElementById('customerName').value;
-    let phone = document.getElementById('customerPhone').value;
     let price = document.getElementById('customerPrice').value;
     let startDate = document.getElementById('startDate').value;
     let endDate = document.getElementById('endDate').value;
 
-    if (name === "" || phone === "" || price === "" || startDate === "" || endDate === "") { 
+    if (name === "" || price === "" || startDate === "" || endDate === "") { 
         showModal("الرجاء تعبئة جميع البيانات!", "alert"); 
         return; 
     }
@@ -158,7 +157,6 @@ function addCustomer() {
             id: Date.now(),
             towerCode: currentLoggedTowerCode,
             name: name,
-            phone: phone,
             price: price,
             startDate: startDate,
             endDate: endDate,
@@ -173,7 +171,6 @@ function addCustomer() {
         for (let i = 0; i < customersData.length; i++) {
             if (customersData[i].id === editCustomerId) {
                 customersData[i].name = name;
-                customersData[i].phone = phone;
                 customersData[i].price = price;
                 customersData[i].startDate = startDate;
                 customersData[i].endDate = endDate;
@@ -189,6 +186,19 @@ function addCustomer() {
     renderCustomers(); 
 }
 
+function searchCustomers() {
+    let input = document.getElementById('searchInput').value.toLowerCase();
+    let items = document.querySelectorAll('.customer-item');
+    items.forEach(item => {
+        let name = item.querySelector('.customer-header span').innerText.toLowerCase();
+        if (name.includes(input)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
 function renderCustomers() {
     let listContainer = document.getElementById('customersList');
     let expiredContainer = document.getElementById('expiredList');
@@ -197,6 +207,18 @@ function renderCustomers() {
 
     let allCustomers = JSON.parse(localStorage.getItem('customersData')) || [];
     let towerCustomers = allCustomers.filter(cust => cust.towerCode === currentLoggedTowerCode);
+
+    towerCustomers.sort((a, b) => {
+        let today = new Date();
+        today.setHours(0,0,0,0);
+        let getRemaining = (dateString) => {
+            if (!dateString) return 0;
+            let end = new Date(dateString);
+            end.setHours(0,0,0,0);
+            return Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+        };
+        return getRemaining(a.endDate) - getRemaining(b.endDate);
+    });
 
     let towerDebt = 0;
     towerCustomers.forEach(cust => {
@@ -233,8 +255,9 @@ function renderCustomers() {
         
         let cDebts = customer.debts || 0;
         let cPaid = customer.paid || 0;
-        let totalPrice = parseFloat(customer.price || 0) + parseFloat(cDebts);
-        let remaining = totalPrice - cPaid;
+        let originalPrice = parseFloat(customer.price || 0) + parseFloat(cDebts);
+        let currentTotal = originalPrice - cPaid;
+        let remaining = currentTotal;
 
         let itemDiv = document.createElement('div');
         itemDiv.className = 'customer-item';
@@ -263,9 +286,8 @@ function renderCustomers() {
             </div>
             <div class="customer-details" id="details-${customer.id}">
                 <div class="customer-info">
-                    <p><strong>المبلغ الكلي:</strong> ${totalPrice} دينار</p>
+                    <p><strong>المبلغ الكلي:</strong> ${currentTotal} دينار</p>
                     <p><strong>الباقي:</strong> <span style="color:#e74c3c; font-weight:bold;">${remaining} دينار</span></p>
-                    <p><strong>الرقم:</strong> ${customer.phone}</p>
                     <p><strong>تاريخ البدء:</strong> ${customer.startDate}</p>
                     <p><strong>تاريخ الانتهاء:</strong> ${customer.endDate}</p>
                 </div>
@@ -360,7 +382,6 @@ function editCustomer(id) {
     let customer = allCustomers.find(c => c.id === id);
     if (customer) {
         document.getElementById('customerName').value = customer.name;
-        document.getElementById('customerPhone').value = customer.phone;
         document.getElementById('customerPrice').value = customer.price;
         document.getElementById('startDate').value = customer.startDate || "";
         document.getElementById('endDate').value = customer.endDate || "";
