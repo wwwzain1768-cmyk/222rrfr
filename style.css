@@ -1,3 +1,4 @@
+/* style.css */
 /* إعدادات عامة */
 * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; }
 body { background-color: #e9ecef; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
