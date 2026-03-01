@@ -5,8 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة الأبراج - المستخدم</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
+    <div id="auth-screen" class="greeting-screen" style="z-index: 10001; flex-direction: column; display: flex;">
+        <div class="greeting-box">
+            <h2 class="animate-text" style="margin-bottom: 20px;">تسجيل الدخول</h2>
+            <button id="google-login-btn" class="secondary-btn" onclick="loginWithGoogle()">تسجيل بواسطة Google</button>
+        </div>
+    </div>
+
     <div id="customModal" class="custom-modal" style="display: none;">
         <div class="modal-content">
             <p id="modalMsg"></p>
@@ -34,7 +42,7 @@
         </div>
     </div>
 
-    <div id="login-section" class="main-container">
+    <div id="login-section" class="main-container" style="display: none;">
         <h2>أهلاً بك، أدخل كلمة سر (رمز) البرج</h2>
         <div class="form-group">
             <input type="password" id="enteredCode" placeholder="أدخل الرمز هنا...">
@@ -90,6 +98,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
